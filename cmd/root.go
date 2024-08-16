@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"sbx/cmd/caddy"
+	"sbx/cmd/install"
 	"sbx/cmd/singbox"
 
 	"github.com/spf13/cobra"
@@ -39,8 +40,18 @@ func NewRootCmd() *cobra.Command {
     singCmd.AddCommand(singbox.LogCmd)
     singCmd.AddCommand(singbox.CheckUpdateCmd)
 
+    installCmd := &cobra.Command{
+        Use:   "install",
+        Short: "Install Service",
+        Long:  "Subcommand untuk menginstall all service.",
+    }
+    installCmd.AddCommand(install.InstallAllCmd)
+    installCmd.AddCommand(install.InstallCaddyCmd)
+    installCmd.AddCommand(install.InstallSingCmd)
+
     rootCmd.AddCommand(caddyCmd)
     rootCmd.AddCommand(singCmd)
+    rootCmd.AddCommand(installCmd)
 
     return rootCmd
 }

@@ -2,8 +2,7 @@ package singbox
 
 import (
 	"fmt"
-	"sbx/pkg/download"
-	"sbx/pkg/extractor"
+	"sbx/internal"
 	"sbx/shared"
 
 	"github.com/spf13/cobra"
@@ -14,7 +13,7 @@ var InstallCmd = &cobra.Command{
     Use:   "install",
     Short: "Unduh dan instal sing-box",
     Run: func(cmd *cobra.Command, args []string) {
-        err := download.InstallCaddy()
+        err := installSingbox()
         if err != nil {
             shared.Error(fmt.Sprintln("Gagal menginstal Sing-box:", err))
             return
@@ -34,11 +33,15 @@ var extractCmd = &cobra.Command{
 		src := args[0]
 		dest := args[1]
 
-		if err := extractor.ExtractTarGz(src, dest); err != nil {
+		if err := internal.ExtractTarGz(src, dest); err != nil {
 			shared.Error(fmt.Sprintf("Error extracting file: %v\n", err))
 			return
 		}
 
-		shared.Info(fmt.Sprint("Extraction complete."))
+		shared.Info("Extraction complete.")
 	},
+}
+
+func installSingbox() error{
+	return nil
 }

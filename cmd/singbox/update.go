@@ -5,12 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sbx/pkg/constant"
-	"sbx/pkg/download"
-	"sbx/pkg/extractor"
-	"sbx/pkg/github"
-	service "sbx/pkg/service/sing"
-	"sbx/pkg/utils"
+	"sbx/internal"
 	"sbx/shared"
 
 	"github.com/spf13/cobra"
@@ -29,7 +24,7 @@ var UpdateCmd = &cobra.Command{
 		}
 
 		// Mendapatkan versi terbaru dari Sing-box
-		latestVersion, err := github.GetLatestRelease("SagerNet", "sing-box", jenisRilis)
+		latestVersion, err := internal.GetLatestRelease("SagerNet", "sing-box", jenisRilis)
 		if err != nil {
 			fmt.Printf("Gagal mendapatkan versi terbaru: %v\n", err)
 			return
@@ -37,7 +32,7 @@ var UpdateCmd = &cobra.Command{
 		fmt.Printf("Versi terbaru Sing-box adalah: %s\n", latestVersion)
 
 		// Mendapatkan versi saat ini dari Sing-box
-		currentVersion, err := service.GetCurrentVersion()
+		currentVersion, err := internal.GetSingBoxVersion()
 		if err != nil {
 			fmt.Printf("Gagal mendapatkan versi saat ini: %v\n", err)
 			return
@@ -65,17 +60,17 @@ var UpdateCmd = &cobra.Command{
 // UpdateSing memperbarui binari Sing-box ke versi terbaru
 func updateSing(version string) error {
 	// Menentukan URL unduhan
-	url := github.BuildDownloadURL("SagerNet", "sing-box", version, utils.DetectOS(), utils.DetectArch())
-	tempFilePath := filepath.Join(constant.TmpDir, "singbox_update.tar.gz")
-	extractDir := filepath.Join(constant.TmpDir, "singbox_update")
+	url, err := internal.BuildDownloadURL("SagerNet", "sing-box", version)
+	tempFilePath := filepath.Join(internal.TmpDir, "singbox_update.tar.gz")
+	extractDir := filepath.Join(internal.TmpDir, "singbox_update")
 
 	fmt.Printf("Mengunduh Sing-box versi %s dari %s...\n", version, url)
-	if err := download.DownloadFile(url, tempFilePath); err != nil {
+	if err := internal.DownloadFile(url, tempFilePath); err != nil {
 		return fmt.Errorf("gagal mengunduh binari Sing-box: %w", err)
 	}
 
 	fmt.Printf("Mengekstrak file %s...\n", tempFilePath)
-	if err := extractor.ExtractTarGz(tempFilePath, extractDir); err != nil {
+	if err := internal.ExtractTarGz(tempFilePath, extractDir); err != nil {
 		return fmt.Errorf("gagal mengekstrak file: %w", err)
 	}
 
@@ -103,7 +98,7 @@ func updateSing(version string) error {
 	defer os.RemoveAll(extractDir)
 	defer os.Remove(tempFilePath)
 
-	updatedVersion, err := github.GetLatestRelease("SagerNet", "sing-box", "stable")
+	updatedVersion, err := internal.GetLatestRelease("SagerNet", "sing-box", "stable")
 	if err != nil || updatedVersion != version {
 		return fmt.Errorf("pembaruan gagal, versi saat ini tidak sesuai")
 	}

@@ -2,7 +2,7 @@ package caddy
 
 import (
 	"fmt"
-	"sbx/pkg/caddyfile"
+	"sbx/internal"
 
 	"github.com/spf13/cobra"
 )
@@ -14,26 +14,6 @@ const (
 	errReplaceDomain    = "Gagal mengganti domain di Caddyfile: %v"
 	successReplaceMessage = "Domain berhasil diganti."
 )
-
-// Fungsi untuk menerapkan Caddyfile
-func applyCaddyfile(cmd *cobra.Command, args []string) {
-	if err := caddyfile.ApplyCaddyfile(); err != nil {
-		fmt.Printf(errApplyCaddyfile, err)
-		return
-	}
-	fmt.Println(successApplyMessage)
-}
-
-// Fungsi untuk mengganti domain di Caddyfile
-func replaceDomain(cmd *cobra.Command, args []string) {
-	oldDomain := args[0]
-	newDomain := args[1]
-	if err := caddyfile.ReplaceDomain(oldDomain, newDomain); err != nil {
-		fmt.Printf(errReplaceDomain, err)
-		return
-	}
-	fmt.Println(successReplaceMessage)
-}
 
 // Mendefinisikan perintah `caddyfile`
 var CaddyfileCmd = &cobra.Command{
@@ -57,4 +37,24 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run:   replaceDomain,
 	})
+}
+
+// Fungsi untuk menerapkan Caddyfile
+func applyCaddyfile(cmd *cobra.Command, args []string) {
+	if err := internal.ApplyCaddyfile(); err != nil {
+		fmt.Printf(errApplyCaddyfile, err)
+		return
+	}
+	fmt.Println(successApplyMessage)
+}
+
+// Fungsi untuk mengganti domain di Caddyfile
+func replaceDomain(cmd *cobra.Command, args []string) {
+	oldDomain := args[0]
+	newDomain := args[1]
+	if err := internal.ReplaceDomain(oldDomain, newDomain); err != nil {
+		fmt.Printf(errReplaceDomain, err)
+		return
+	}
+	fmt.Println(successReplaceMessage)
 }

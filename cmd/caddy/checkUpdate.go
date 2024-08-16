@@ -2,8 +2,7 @@ package caddy
 
 import (
 	"fmt"
-	"sbx/pkg/github"
-	service "sbx/pkg/service/caddy"
+	"sbx/internal"
 	"sbx/shared"
 
 	"github.com/blang/semver/v4"
@@ -29,14 +28,14 @@ func checkUpdate(cmd *cobra.Command, args []string) {
 	}
 
 	// Mendapatkan versi terbaru dari Sing-box
-	latestVersion, err := github.GetLatestRelease("caddyserver", "caddy", jenisRilis)
+	latestVersion, err := internal.GetLatestRelease("caddyserver", "caddy", jenisRilis)
 	if err != nil {
 		fmt.Printf("Gagal mendapatkan versi terbaru: %v\n", err)
 		return
 	}
 
 	// Mendapatkan versi saat ini dari Sing-box
-	currentVersion, err := service.GetCurrentVersion()
+	currentVersion, err := internal.GetCaddyVersion()
 	if err != nil {
 		shared.Info(fmt.Sprintf("Gagal mendapatkan versi saat ini: %v\n", err))
 		return

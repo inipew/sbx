@@ -2,8 +2,7 @@ package singbox
 
 import (
 	"fmt"
-	"sbx/pkg/github"
-	service "sbx/pkg/service/sing"
+	"sbx/internal"
 	"sbx/shared"
 
 	"github.com/blang/semver/v4"
@@ -29,14 +28,14 @@ func checkUpdate(cmd *cobra.Command, args []string) {
 	}
 
 	// Mendapatkan versi terbaru dari Sing-box
-	latestVersion, err := github.GetLatestRelease("SagerNet", "sing-box", jenisRilis)
+	latestVersion, err := internal.GetLatestRelease("SagerNet", "sing-box", jenisRilis)
 	if err != nil {
 		fmt.Printf("Gagal mendapatkan versi terbaru: %v\n", err)
 		return
 	}
 
 	// Mendapatkan versi saat ini dari Sing-box
-	currentVersion, err := service.GetSingBoxVersion()
+	currentVersion, err := internal.GetSingBoxVersion()
 	if err != nil {
 		shared.Info(fmt.Sprintf("Gagal mendapatkan versi saat ini: %v\n", err))
 		return
@@ -48,7 +47,7 @@ func checkUpdate(cmd *cobra.Command, args []string) {
 		shared.Info(fmt.Sprintf("Gagal parsing versi terbaru: %v\n", err))
 		return
 	}
-
+	
 	currentSemver, err := semver.Parse(currentVersion)
 	if err != nil {
 		shared.Info(fmt.Sprintf("Gagal parsing versi saat ini: %v\n", err))

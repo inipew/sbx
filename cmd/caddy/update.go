@@ -7,8 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"sbx/pkg/github"
-	service "sbx/pkg/service/caddy"
+	"sbx/internal"
 
 	"github.com/spf13/cobra"
 )
@@ -24,8 +23,8 @@ var UpdateCmd = &cobra.Command{
 			jenisRilis = "stable"
 		}
 
-		// Mendapatkan versi terbaru dari Sing-box
-		latestVersion, err := github.GetLatestRelease("SagerNet", "sing-box", jenisRilis)
+		// Mendapatkan versi terbaru dari caddy
+		latestVersion, err := internal.GetLatestRelease("caddyserver", "caddy", jenisRilis)
 		if err != nil {
 			fmt.Printf("Gagal mendapatkan versi terbaru: %v\n", err)
 			return
@@ -33,7 +32,7 @@ var UpdateCmd = &cobra.Command{
 		fmt.Printf("Versi terbaru Caddy adalah: %s\n", latestVersion)
 
 		// Mendapatkan versi saat ini dari Caddy
-		currentVersion, err := service.GetCurrentVersion()
+		currentVersion, err := internal.GetCaddyVersion()
 		if err != nil {
 			fmt.Printf("Gagal mendapatkan versi saat ini: %v\n", err)
 			return
@@ -119,7 +118,7 @@ func updateCaddy(version string) error {
 	defer os.Remove(backupPath)
 
 	// Verifikasi update
-	updatedVersion, err := service.GetCurrentVersion()
+	updatedVersion, err := internal.GetCaddyVersion()
 	if err != nil || updatedVersion != version {
 		return fmt.Errorf("pembaruan gagal, versi saat ini tidak sesuai")
 	}
